@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import calculator.calc.CalculationService;
 import calculator.calc.Calculator;
 import calculator.calc.InvalidExpressionException;
 import calculator.data.entities.CalcResult;
@@ -14,37 +15,31 @@ import calculator.data.entities.CalcResult;
 @Service
 public class HistoryServiceImpl implements HistoryService {
     @Autowired
-    private CalcResultRepository calcResultRepository;
+    private CalcResultRepository resultRepository;
 
     @Autowired
-    private Calculator calculator;
+    private CalculationService calculationService;
 
     @Override
     public double calculateAndSave(String username, String expression) throws InvalidExpressionException {
-        double calcResult = calculator.calculate(expression);
-
-        CalcResult toSave = new CalcResult();
-        toSave.setExpression(expression);
-        toSave.setResult(calcResult);
+        CalcResult toSave = calculationService.calculate(expression);
         toSave.setUsername(username);
-        toSave.setDate(LocalDateTime.now());
-        calcResultRepository.save(toSave);
-
-        return calcResult;
+        resultRepository.save(toSave);
+        return toSave.getResult();
     }
 
     @Override
     public Page<CalcResult> getResultsByUsername(String username, Pageable pageable) {
-        return calcResultRepository.findAllByUsername(username, pageable);
+        return resultRepository.findAllByUsername(username, pageable);
     }
 
     @Override
     public Page<CalcResult> getResultsByExpression(String expression, Pageable pageable) {
-        return calcResultRepository.findAllByExpression(expression, pageable);
+        return resultRepository.findAllByExpression(expression, pageable);
     }
 
     @Override
     public Page<CalcResult> getResultsBetweenDates(LocalDateTime fromDate, LocalDateTime toDate, Pageable pageable) {
-        return calcResultRepository.findAllByDateBetween(fromDate, toDate, pageable);
+        return resultRepository.findAllByDateBetween(fromDate, toDate, pageable);
     }
 }

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,8 +47,10 @@ public class HistoryController {
     @GetMapping("/betweenDates")
     public Page<CalcResult> getBetweenDates(
             @RequestParam(name = "fromDate")
+            @DateTimeFormat(pattern="yyyy-MM-dd HH:mm")
                     LocalDateTime fromDate,
             @RequestParam(name = "toDate")
+            @DateTimeFormat(pattern="yyyy-MM-dd HH:mm")
                     LocalDateTime toDate,
             @PageableDefault
                     Pageable pageable
